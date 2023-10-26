@@ -1,19 +1,29 @@
-FROM debian:buster
+FROM	 debian:buster
 
 # Installation des dépendances
-RUN		apt update -y &&									\
-		apt upgrade -y &&									\
+RUN		apt update -y &&    \
+		apt upgrade -y &&   \
 		apt install -y mariadb-server=1:10.3.39-0+deb10u1
 
-# Copie de la configuration de MariaDB
-COPY	conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+# Permission de l'utilisateur mysql sur le dossier de stockage des données
+RUN		chown -R mysql:mysql /var/lib/mysql
+RUN		chmod +x -R /var/lib/mysql
 
-# Création de la base de données MySQL à l'aide du système de table
-RUN		service mysql start &&																									\
-		mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;" &&														\
-		mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';" &&					\
-		mysql -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';" &&		\
-		mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';" &&										\
-		mysql -e "FLUSH PRIVILEGES;" &&																							\
-		mysqladmin -u root -p$SQL_ROOT_PASSWORD shutdown &&																		\
-		exec mysqld_safe
+# Variables d'environnement
+ARG		HOSTNAME=${HOSTNAME}
+ARG		SQL_HOST=${SQL_HOST}
+ARG 	SQL_DATABASE=${SQL_DATABASE}
+ARG 	SQL_USER=${SQL_USER}
+ARG 	SQL_PASSWORD=${SQL_PASSWORD}
+ARG 	SQL_ROOT_PASSWORD=${SQL_ROOT_PASSWORD}
+
+# Execution du script de configuration de MySQL
+COPY	conf/mysql.sh /tmp/mysql.sh
+RUN		chmod +x /tmp/mysql.sh
+RUN		/tmp/mysql.sh
+
+# Exposer le port MySQL (par défaut, 3306)
+EXPOSE	3306
+
+# Commande de démarrage
+CMD 	["mysqld"]

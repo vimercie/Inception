@@ -1,1 +1,71 @@
-# docker build -t nginx:1.14.2-2+deb10u5 .
+version: '3'
+
+services:
+
+  mariadb:
+    container_name: mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile
+    environment:
+      HOSTNAME: ${HOSTNAME}
+      SQL_HOST: ${SQL_HOST}
+      SQL_DATABASE: ${SQL_DATABASE}
+      SQL_USER: ${SQL_USER}
+      SQL_PASSWORD: ${SQL_PASSWORD}
+      SQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+    restart: unless-stopped
+    expose:
+      - "3306"
+    networks:
+      - inception
+
+  wordpress:
+    container_name: wordpress
+    volumes:
+      - wordpress:/var/www/wordpress
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    restart: on-failure
+    networks:
+      - inception
+    expose:
+      - "9000"
+    depends_on:
+      - mariadb
+
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress:/var/www/wordpress
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    restart: on-failure
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vimercie/data/mariadb'
+  wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vimercie/data/wordpress'
