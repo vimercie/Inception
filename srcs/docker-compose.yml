@@ -17,8 +17,8 @@ services:
       SQL_PASSWORD: ${SQL_PASSWORD}
       SQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
     restart: unless-stopped
-    expose:
-      - "3306"
+    ports:
+      - "3306:3306"
     networks:
       - inception
 
@@ -29,6 +29,13 @@ services:
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
+    environment:
+      HOSTNAME: ${HOSTNAME}
+      SQL_HOST: ${SQL_HOST}
+      SQL_DATABASE: ${SQL_DATABASE}
+      SQL_USER: ${SQL_USER}
+      SQL_PASSWORD: ${SQL_PASSWORD}
+      SQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
     restart: on-failure
     networks:
       - inception
