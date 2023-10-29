@@ -1,58 +1,46 @@
 version: '3'
 
 services:
-
   mariadb:
     container_name: mariadb
     volumes:
-      - mariadb:/var/lib/mysql
+      - mariadb-vol:/var/lib/mysql
     build:
-      context: requirements/mariadb
+      context: ./requirements/mariadb
       dockerfile: Dockerfile
-    environment:
-      HOSTNAME: ${HOSTNAME}
-      SQL_HOST: ${SQL_HOST}
-      SQL_DATABASE: ${SQL_DATABASE}
-      SQL_USER: ${SQL_USER}
-      SQL_PASSWORD: ${SQL_PASSWORD}
-      SQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+    env_file: .env
     restart: unless-stopped
     ports:
-      - "3306:3306"
+      - 3306:3306
     networks:
       - inception
 
   wordpress:
     container_name: wordpress
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress-vol:/var/www/wordpress
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-    environment:
-      HOSTNAME: ${HOSTNAME}
-      SQL_HOST: ${SQL_HOST}
-      SQL_DATABASE: ${SQL_DATABASE}
-      SQL_USER: ${SQL_USER}
-      SQL_PASSWORD: ${SQL_PASSWORD}
-      SQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+    env_file: .env
     restart: on-failure
     networks:
       - inception
-    expose:
-      - "9000"
+    ports:
+      - 9000:9000
     depends_on:
       - mariadb
 
   nginx:
     container_name: nginx
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress-vol:/var/www/wordpress
     build:
-      context: requirements/nginx
+      context: ./requirements/nginx
       dockerfile: Dockerfile
+    env_file: .env
     ports:
-      - "443:443"
+      - 443:443
     restart: on-failure
     networks:
       - inception
@@ -64,15 +52,15 @@ networks:
     driver: bridge
 
 volumes:
-  mariadb:
+  mariadb-vol:
     driver: local
     driver_opts:
-      type: 'none'
+      type: none
       o: 'bind'
-      device: '/home/vimercie/data/mariadb'
-  wordpress:
+      device: '/home/vimercie/data/mariadb-vol'
+  wordpress-vol:
     driver: local
     driver_opts:
-      type: 'none'
+      type: none
       o: 'bind'
-      device: '/home/vimercie/data/wordpress'
+      device: '/home/vimercie/data/wordpress-vol'
