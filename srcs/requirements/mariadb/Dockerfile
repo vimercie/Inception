@@ -8,9 +8,7 @@ RUN		apt update -y &&    \
 
 COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
-# COPY	conf/mysql.sh /tmp/mysql.sh
-# RUN		chmod +x /tmp/mysql.sh
+COPY	conf/mysql.sh /tmp/mysql.sh
+RUN		chmod +x /tmp/mysql.sh
 
-EXPOSE	3306
-
-CMD		["mysqld_safe"]
+CMD		["/tmp/mysql.sh"]
