@@ -26,9 +26,5 @@ RUN		mkdir -p /var/run/nginx
 # Copie de la configuration de Nginx
 COPY	conf/nginx.conf /etc/nginx/nginx.conf
 
-# Gestion des droits
-# RUN		chmod 755 /var/www/html
-# RUN		chown -R www-data:www-data /var/www/html
-
 # Lancement de Nginx
 CMD 	[ "nginx", "-g", "daemon off;" ]
