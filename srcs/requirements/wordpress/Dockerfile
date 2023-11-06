@@ -15,18 +15,20 @@ RUN		wget https://fr.wordpress.org/wordpress-6.0-fr_FR.tar.gz -P /var/www	\
 		&& rm wordpress-6.0-fr_FR.tar.gz										\
 		&& chown -R root:root /var/www/wordpress
 
-# Configuration de PHP
-COPY 	conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
-
-# Configuration de Wordpress
+# Installation de WP-CLI
 RUN		wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
 		mv wp-cli.phar /usr/local/bin/wp && \
 		chmod +x /usr/local/bin/wp
 
-COPY	conf/auto-config.sh /tmp/auto-config.sh
-COPY 	conf/wordpress.sh /tmp/wordpress.sh
+# Configuration de PHP
+COPY 	conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+
+# Copie des scripts de configuration et de lancement de WordPress
+COPY 	tools/wordpress.sh /tmp/wordpress.sh
+COPY	tools/wp-config.sh /tmp/wp-config.sh
 RUN		chmod -R +x /tmp
 
+# Création du dossier de stockage des processus de PHP
 RUN		mkdir -p /run/php
 
-ENTRYPOINT /tmp/wordpress.sh
+ENTRYPOINT ["/tmp/wordpress.sh"]

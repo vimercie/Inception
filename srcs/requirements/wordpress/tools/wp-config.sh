@@ -10,10 +10,10 @@ wp core install 	--allow-root \
 					--path=/var/www/wordpress \
 					--url=https://localhost \
 					--title="Vimercie's site" \
-					--admin_user=admin \
-					--admin_password=admin \
+					--admin_user=$DB_USER \
+					--admin_password=$DB_PASSWORD \
 					--admin_email=vincent.mrc@hotmail.com
 wp user create 		--allow-root \
 					--path=/var/www/wordpress \
-					vimercie vimercie@student.42lyon.fr	\
+					user1 vimercie@student.42lyon.fr \
 					--user_pass=password

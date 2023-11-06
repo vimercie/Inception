@@ -13,6 +13,7 @@ RUN		mkdir -p /etc/nginx/ssl &&					\
 		-keyout	/etc/nginx/ssl/inception.key		\
 		-subj "/C=FR/ST=ARA/L=Lyon/O=42Lyon/OU=Student/CN=vimercie.42lyon.fr/UID=vimercie"
 
+#		req:		Requête de certificat,
 #		-x509:		Auto-signature du certificat,
 #		-nodes:		Ne pas mettre de mot de passe,
 #		-out:		Chemin du certificat,
@@ -26,8 +27,8 @@ RUN		mkdir -p /var/run/nginx
 COPY	conf/nginx.conf /etc/nginx/nginx.conf
 
 # Gestion des droits
-RUN		chmod 755 /var/www/html
-RUN		chown -R www-data:www-data /var/www/html
+# RUN		chmod 755 /var/www/html
+# RUN		chown -R www-data:www-data /var/www/html
 
 # Lancement de Nginx
 CMD 	[ "nginx", "-g", "daemon off;" ]
