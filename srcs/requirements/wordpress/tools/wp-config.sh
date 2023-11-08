@@ -8,7 +8,7 @@ wp config create	--allow-root \
 					--path='/var/www/wordpress'
 wp core install 	--allow-root \
 					--path=/var/www/wordpress \
-					--url=https://localhost \
+					--url=https://vimercie.42.fr \
 					--title="Vimercie's site" \
 					--admin_user=$DB_USER \
 					--admin_password=$DB_PASSWORD \
@@ -16,4 +16,4 @@ wp core install 	--allow-root \
 wp user create 		--allow-root \
 					--path=/var/www/wordpress \
 					user1 vimercie@student.42lyon.fr \
-					--user_pass=password
+					--user_pass=$DB_PASSWORD

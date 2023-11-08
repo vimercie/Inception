@@ -18,7 +18,10 @@ WORDPRESS_VOL=	${VOLUME_DIR}/wordpress-vol
 
 all:
 	mkdir -p ${MARIADB_VOL} ${WORDPRESS_VOL}
-	${COMPOSE} up -d
+	${COMPOSE} up
+
+stop:
+	${COMPOSE} stop
 
 clean:
 	${COMPOSE} down
@@ -29,13 +32,11 @@ clean-images:
 	docker image prune -a -f
 
 clean-volumes:
-	rm -rf ${MARIADB_VOL}/*
-	rm -rf ${WORDPRESS_VOL}/*
+	docker volume prune -a -f
 
 prune:	fclean
 	docker system prune -a -f
-	rm -rf ${VOLUME_DIR}
 
 re: 	fclean all
 
-.PHONY: all clean fclean clean-volumes prune re
+.PHONY: all stop clean fclean clean-volumes prune re
