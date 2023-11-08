@@ -1,5 +1,10 @@
 sleep 10
 cd /var/www/wordpress
+
+if [ -f /var/www/wordpress/wp-config.php ]; then
+	exit 0
+fi
+
 wp config create	--allow-root \
 			        --dbname=$DB_NAME \
 			        --dbuser=$DB_USER \
