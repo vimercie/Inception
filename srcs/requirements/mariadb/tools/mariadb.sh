@@ -16,4 +16,4 @@ if [ $? -ne 0 ]; then
 fi
 
 # Démarrer le processus principal une fois le processus auxiliaire terminé
-exec mysqld --init-file=/tmp/init.sql
+exec mysqld_safe
